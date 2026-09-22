@@ -1,0 +1,69 @@
+{
+    "version": 6,
+
+    "configurePresets": [
+        {
+            "name": "native",
+            "displayName": "Native Release",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/native",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+
+        {
+            "name": "debug",
+            "displayName": "Native Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+
+        {
+            "name": "windows",
+            "displayName": "Windows x86_64",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/windows",
+            "toolchainFile": "${sourceDir}/cmake/mingw-x86_64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+
+        {
+            "name": "web",
+            "displayName": "WebAssembly",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/web",
+            "toolchainFile": "/usr/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+
+    "buildPresets": [
+        {
+            "name": "native",
+            "configurePreset": "native"
+        },
+
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+
+        {
+            "name": "windows",
+            "configurePreset": "windows"
+        },
+
+        {
+            "name": "web",
+            "configurePreset": "web"
+        }
+    ]
+}
