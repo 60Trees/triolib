@@ -25,6 +25,8 @@ struct WorkingRenderer : Renderer {
         glcontext = SDL_GL_CreateContext(window);
         tassertmsg(glcontext, SDL_GetError());
 
+        SDL_GetWindowSizeInPixels(window, &window_size.x, &window_size.y);
+
 #ifndef __EMSCRIPTEN__
         int loaded = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
         std::cout << "glad load result: " << loaded << "\n";
@@ -151,7 +153,6 @@ struct GameRenderer : WorkingRenderer {
 
         ADD_UNIFORM("u_windowsize", glUniform2i(b, r.window_size.x, r.window_size.y));
 
-        for (auto& uniform : uniforms) uniform.base.init(uniform.name.c_str());
         vao.create();
         vao.bind();
 
@@ -178,6 +179,11 @@ struct GameRenderer : WorkingRenderer {
         shaderprogram.attach(frag);
 
         shaderprogram.link();
+
+        for (auto& uniform : uniforms) {
+            uniform.base.id = shaderprogram.id;
+            uniform.base.init(uniform.name.c_str());
+        }
     }
     void loop() override {
         typeof(*this)& hi = *this;
@@ -194,6 +200,7 @@ struct GameRenderer : WorkingRenderer {
 
         if (should_resize) {
             glViewport(0, 0, window_size.x, window_size.y);
+            should_resize = false;
         }
         SDL_GL_SwapWindow(window);
     }

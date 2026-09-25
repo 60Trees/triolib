@@ -158,7 +158,7 @@ namespace opengl {
 
     struct ShaderUniform {
         GLint id;
-        inline GLint init(const char* name) { return glGetUniformLocation(id, name); }
+        inline GLint init(const char* name) { return id = glGetUniformLocation(id, name); }
         inline operator GLint() const { return id; }
         inline operator GLint&() { return id; }
     };
