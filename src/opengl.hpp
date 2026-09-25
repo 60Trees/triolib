@@ -1,4 +1,4 @@
-/**
+/*
  * @author 60Trees_ (github.com/60Trees)
  * @version 1.0.0
  */
@@ -118,13 +118,12 @@ namespace opengl {
         }
 
         std::cerr << "\n"
-                  << "========== OpenGL DEBUG ==========\n"
-                  << "Source:   " << source_str << '\n'
-                  << "Type:     " << type_str << '\n'
-                  << "Severity: " << severity_str << '\n'
-                  << "ID:       " << id << '\n'
-                  << "Message:  " << message << '\n'
-                  << "==================================\n";
+                  << "[OPENGL] Debug callback\n"
+                  << "- Source:   " << source_str << '\n'
+                  << "- Type:     " << type_str << '\n'
+                  << "- Severity: " << severity_str << '\n'
+                  << "- ID:       " << id << '\n'
+                  << "- Message:  " << message << std::endl;
 
         // Stop in the debugger on serious OpenGL errors.
 #    if defined(__GNUC__) || defined(__clang__)

@@ -142,12 +142,12 @@ struct GameRenderer : WorkingRenderer {
 
         fps = &parent->get<FpsHandler>();
 
-#ifndef __EMSCRIPTEN__
-        if (has_extension("GL_ARB_gpu_shader_int64") || has_extension("GL_AMD_gpu_shader_int64"))
-            ADD_UNIFORM("u_time", glUniform1ui64NV(b, r.fps->ticks));
-        else
-#endif
-            ADD_UNIFORM("u_time", glUniform1ui(b, static_cast<unsigned int>(r.fps->ticks)));
+        // #ifndef __EMSCRIPTEN__
+        //         if (has_extension("GL_ARB_gpu_shader_int64") || has_extension("GL_AMD_gpu_shader_int64"))
+        //             ADD_UNIFORM("u_time", glUniform1ui64NV(b, r.fps->ticks));
+        //         else
+        // #endif
+        ADD_UNIFORM("u_time", glUniform1ui(b, static_cast<unsigned int>(r.fps->ticks)));
 
         ADD_UNIFORM("u_windowsize", glUniform2i(b, r.window_size.x, r.window_size.y));
 

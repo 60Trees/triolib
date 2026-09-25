@@ -3,12 +3,7 @@
  * @version 1.0.0
  */
 
-#extension GL_ARB_gpu_shader_int64 : enable
-#if defined(GL_ARB_gpu_shader_int64)
-uniform uint64_t u_time;
-#else
 uniform uint u_time;
-#endif
 
 out vec4 FragColor;
 

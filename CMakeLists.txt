@@ -10,15 +10,10 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
+set(GL_VERSION_MAJOR 4)
+set(GL_VERSION_MINOR 3)
 
-set(SDL_SHARED OFF CACHE BOOL "" FORCE)
-set(SDL_STATIC ON CACHE BOOL "" FORCE)
-set(SDL_TESTS OFF CACHE BOOL "" FORCE)
-set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(SDL_INSTALL OFF CACHE BOOL "" FORCE)
-set(SDL_INSTALL_TESTS OFF CACHE BOOL "" FORCE)
-set(SDL_INSTALL_CPACK OFF CACHE BOOL "" FORCE)
+include(FetchContent)
 
 file(
     GLOB_RECURSE GAME_SOURCES
@@ -41,26 +36,19 @@ target_compile_definitions(
         BUILD_TYPE_MINSIZEREL=3
         PROJECT_NAME="${PROJECT_NAME}"
 )
+
 target_compile_definitions(
     ${PROJECT_NAME}
     PRIVATE
         BUILD_TYPE=$<IF:$<CONFIG:Debug>,0,$<IF:$<CONFIG:RelWithDebInfo>,1,$<IF:$<CONFIG:Release>,2,$<IF:$<CONFIG:MinSizeRel>,3,-1>>>>
         BUILD_TYPE_STR="$<CONFIG>"
 )
+
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/src/")
 
-FetchContent_Declare(
-    SDL3
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-    GIT_TAG release-3.2.22
-    GIT_SHALLOW TRUE
-)
-FetchContent_Declare(
-    glm
-    GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG 1.0.1
-    GIT_SHALLOW TRUE
-)
+find_package(SDL3 CONFIG REQUIRED COMPONENTS SDL3-static)
+find_package(glm CONFIG REQUIRED)
+
 FetchContent_Declare(
     glad
     GIT_REPOSITORY https://github.com/Dav1dde/glad.git
@@ -74,7 +62,7 @@ FetchContent_Declare(
     GIT_TAG        2.0.1
     GIT_SHALLOW    TRUE
 )
-FetchContent_MakeAvailable(SDL3 glad cmakerc glm)
+FetchContent_MakeAvailable(glad cmakerc)
 
 file(
     GLOB_RECURSE GAME_ASSETS
@@ -90,13 +78,19 @@ cmrc_add_resource_library(
     ${GAME_ASSETS}
 )
 
-glad_add_library(glad_gl_core_43 STATIC REPRODUCIBLE LOADER API gl:core=4.3)
+glad_add_library(
+    glad_gl_core
+    STATIC
+    REPRODUCIBLE
+    LOADER
+    API gl:core=${GL_VERSION_MAJOR}.${GL_VERSION_MINOR}
+)
 
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
         SDL3::SDL3-static
-        glad_gl_core_43
+        glad_gl_core
         game_assets
         glm::glm
 )
@@ -147,5 +141,14 @@ if(EMSCRIPTEN)
             "-sASSERTIONS=1"
             "--shell-file"
             "${CMAKE_SOURCE_DIR}/web/shell.html"
+    )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        GL_VERSION_MAJOR=3
+        GL_VERSION_MINOR=0
+    )
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        GL_VERSION_MAJOR=${GL_VERSION_MAJOR}
+        GL_VERSION_MINOR=${GL_VERSION_MINOR}
     )
 endif()
